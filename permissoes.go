@@ -62,7 +62,7 @@ func VerificarPermissao(caminho, usuario string) (bool, error) {
 
 	// Verifica se o usuário atual é o proprietário
 	if proprietario != usuario {
-		return false, fmt.Errorf("[ERRO] Acesso negado: você não tem permissão para apagar o caminho %s.", caminho)
+		return false, fmt.Errorf("Acesso negado: você não tem permissão para apagar o caminho %s.", caminho)
 	}
 
 	// Retorna sucesso se o usuário for o proprietário
