@@ -40,9 +40,15 @@ func main() {
 		fmt.Print("Escolha uma opção: ")
 
 		var opcao string
-		fmt.Scanln(&opcao)
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			opcao = strings.TrimSpace(scanner.Text())
+		} else {
+			fmt.Println("Erro ao ler entrada. Tente novamente.")
+			continue
+		}
 
-		switch strings.TrimSpace(opcao) {
+		switch opcao {
 		case "1":
 			// Login do usuário
 			var user *Usuario
