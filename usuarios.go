@@ -74,21 +74,25 @@ func GerarHashSenha(senha, salt string) string {
 // Captura senha de forma segura
 func CapturarSenha(mensagem string) (string, error) {
 	fmt.Print(mensagem)
-	if term.IsTerminal(0) {
-		senhaBytes, err := term.ReadPassword(0)
-		fmt.Println()
+
+	// Verifica se estamos em um terminal interativo
+	if term.IsTerminal(int(os.Stdin.Fd())) {
+		// Lê a senha sem exibir os caracteres digitados
+		senhaBytes, err := term.ReadPassword(int(os.Stdin.Fd()))
+		fmt.Println() // Adiciona uma quebra de linha após a entrada da senha
 		if err != nil {
 			return "", fmt.Errorf("erro ao capturar senha: %v", err)
 		}
 		return strings.TrimSpace(string(senhaBytes)), nil
-	} else {
-		reader := bufio.NewReader(os.Stdin)
-		senha, err := reader.ReadString('\n')
-		if err != nil {
-			return "", fmt.Errorf("erro ao capturar senha: %v", err)
-		}
-		return strings.TrimSpace(senha), nil
 	}
+
+	// Caso não seja um terminal interativo (ex.: redirecionamento), usa leitura padrão
+	reader := bufio.NewReader(os.Stdin)
+	senha, err := reader.ReadString('\n')
+	if err != nil {
+		return "", fmt.Errorf("erro ao capturar senha: %v", err)
+	}
+	return strings.TrimSpace(senha), nil
 }
 
 // Cria um novo usuário, mantendo os usuários existentes
