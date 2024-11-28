@@ -1,5 +1,14 @@
 # Mini Sistema Operacional (MiniSO)
 
+Trabalho de So:
+Giovana Amorim Campos - 22309728
+Joao Gabriel Mota Santos - 22302862
+Izabelle Alencar Nabarrete - 22301521
+Vítor Pereira da Costa - 22309339
+Yago de Queiroz Pio - 22308708
+Felipe Madruga Gusmão - 22303889
+
+
 Este projeto consiste na implementação de um Mini Sistema Operacional (MiniSO) básico, permitindo a criação, manipulação e gerenciamento de usuários, arquivos e diretórios. Ele simula algumas funcionalidades de sistemas operacionais reais, como permissões de usuários e gerenciamento de estruturas de arquivos.
 
 ---
