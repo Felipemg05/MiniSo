@@ -114,7 +114,7 @@ func ApagarDiretorio(caminho string, usuario string, force bool) error {
 		return fmt.Errorf("o diretório não existe: %s", caminho)
 	}
 
-	// Verifica permissão, exceto se --force for usado
+	// Caso force não seja usado, verifica a permissão do usuário
 	if !force {
 		permitido, err := VerificarPermissao(caminho, usuario)
 		if err != nil {
@@ -123,20 +123,42 @@ func ApagarDiretorio(caminho string, usuario string, force bool) error {
 		if !permitido {
 			return fmt.Errorf("[ERRO] Você não tem permissão para apagar este diretório. Use --force para forçar a remoção.")
 		}
-	}
 
-	// Verifica se o diretório está vazio (se --force não for usado)
-	if !force {
+		// Verifica se o diretório está vazio
 		entries, err := os.ReadDir(caminho)
 		if err != nil {
 			return fmt.Errorf("erro ao verificar conteúdo do diretório: %v", err)
 		}
 		if len(entries) > 0 {
-			return fmt.Errorf("[ERRO] Diretório não está vazio e você não usou --force. Para remover, tente: apagar diretorio <caminho> --force")
+			return fmt.Errorf("[ERRO] Diretório não está vazio. Para remover, use: apagar diretorio <caminho> --force")
 		}
 	}
 
-	// Remove o diretório
+	// Caso force seja usado, apaga tudo, mesmo que o diretório tenha subitens
+	if force {
+		err := filepath.Walk(caminho, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if !info.IsDir() {
+				permitido, err := VerificarPermissao(path, usuario)
+				if err == nil && permitido {
+					// Remove permissões do arquivo
+					if remErr := RemoverPermissao(path); remErr != nil {
+						fmt.Printf("[ERRO] Falha ao remover permissão do arquivo: %v\n", remErr)
+					}
+				}
+				// Remove o arquivo
+				return os.Remove(path)
+			}
+			return nil
+		})
+		if err != nil {
+			return fmt.Errorf("erro ao apagar itens do diretório: %v", err)
+		}
+	}
+
+	// Finalmente, apaga o diretório raiz
 	err := os.RemoveAll(caminho)
 	if err != nil {
 		return fmt.Errorf("erro ao apagar diretório: %v", err)
